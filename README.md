@@ -29,4 +29,13 @@ keyboard-focused rather than mouse-focused.
 
 All in, it's about 500 lines of PHP+HTML+Javascript, and
 the best reference for current keyboard bindinds is to read
-the source.
+the source. Currently the are
+```
+C-arrowleft/right     next/prev hundreds
+a/d                   next/prev unit
+S-a/d                 next/prev tens
+s/w                   next/prev tens
+S-s/w                 next/prev hundreds
+```
+
+Most of the work is in `tl.php`.
