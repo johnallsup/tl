@@ -47,7 +47,11 @@ d.assign = function(h,t,u,v) {
   if( !this.get(h).has(t) ) { this.get(h).set(t,new Map()) }
   this.get(h).get(t).set(u,v)
 }
+
+// for updating the hundreds, tens and units buttons
+// to only show valid options
 const upd_hs = _ => {
+  // update hundreds
   const div = q("div.nav .hundreds")
   div.innerHTML = ""
   const hs = Array.from(d.keys())
@@ -60,6 +64,7 @@ const upd_hs = _ => {
   })
 }
 const upd_ts = _ => {
+  // update tens
   const div = q("div.nav .tens")
   div.innerHTML = ""
   const ts = Array.from(d.get(ch).keys())
@@ -72,6 +77,7 @@ const upd_ts = _ => {
   })
 }
 const upd_us = _ => {
+  // update units
   const div = q("div.nav2 span.episodes")
   div.innerHTML = ""
   const us = Array.from(d.get(ch).get(ct).keys())
@@ -83,6 +89,8 @@ const upd_us = _ => {
     div.append(e)
   })
 }
+
+// MOUSE EVENT HANDLERS
 const hundreds_click = e => {
   const h = e.target.innerText
   sel_h(h)
@@ -95,6 +103,8 @@ const units_click = e => {
   const u = e.target.innerText
   sel_u(u)
 }
+
+// SELECTORS
 const sel_h = h => {
   if(! d.has(h) ) {
     console.log(`Episode hundreds = ${h} not in list`)
@@ -167,6 +177,7 @@ const sel_u = u => {
   setTimeout(upd_pushed,0)
   return fetch_episode(`${tl_name}/${ch}${ct}${cu}`)
 }
+
 const upd_pushed = _ => {
   let spans
   spans = qq("div.nav .hundreds .selector")
@@ -198,10 +209,14 @@ const upd_pushed = _ => {
     }
   })
 }
+
+// Select an episode
 const sel = (h,t,u) => {
   console.log({h,t,u})
   sel_h(h) && sel_t(t) && sel_u(u)
 }
+
+// Fetching code
 const fetch_list = async _ => {
   try {
     list.forEach((line,i) => {
@@ -247,6 +262,8 @@ const fetch_episode = async ep => {
     console.log(`Failed to get episode ${ep} == ${e}`)
   }
 }
+
+// Next/prev
 const prev_u = _ => {
   dli = (dli + dl.length - 1) % dl.length
   const [ h, t, u, v ] = dl[dli]
@@ -289,16 +306,25 @@ const next_h = _ => {
   const hh = ks[j]
   sel_h(hh)
 }
+
+// KEYBOARD SHORTCUTS
+// C-arrowleft/right next/prev hundreds
+// a/d               next/prev unit
+// S-a/d             next/prev tens
+// s/w               next/prev tens
+// S-s/w             next/prev hundreds
 const setup_keys = _ => {
   window.addEventListener("keydown", e => {
     const { key } = e
     switch(key.toLowerCase()) {
       case "arrowleft":
+        e.preventDefault()
         if( e.ctrlKey ) return prev_h()
       case "a":
         e.preventDefault()
         return e.shiftKey ? prev_t() : prev_u()
       case "arrowright":
+        e.preventDefault()
         if( e.ctrlKey ) return next_h()
       case "d":
         e.preventDefault()
@@ -312,17 +338,8 @@ const setup_keys = _ => {
     }
   })
 }
-/*
-      case "ArrowLeft":
-        break;
-      case "ArrowRight":
-        dli = (dli + 1) % dl.length
-        [ h, t, u, v ] = dl[dli]
-        sel(h,t,u)
-        break;
-    }
-}
-*/
+
+// Startup
 const init = async _ => {
   await fetch_list()
   const ep0 = list[0]
@@ -336,13 +353,6 @@ window.addEventListener("load",init)
 div.tracklist {
   white-space: pre-wrap;
 }
-/*
-div {
-  border: 1px solid black;
-  margin: 5px;
-  padding: 5px;
-}
-*/
 body {
   margin: 0px;
   padding: 0px;
